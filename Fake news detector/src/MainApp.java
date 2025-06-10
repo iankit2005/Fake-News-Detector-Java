@@ -33,16 +33,46 @@ public class MainApp {
         checkButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String headline = inputField.getText();
+                String headline = inputField.getText().trim();
+                // Input validation
+                if (headline.isEmpty()) {
+                    JOptionPane.showMessageDialog(frame, "Headline cannot be empty.", "Validation Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                if (headline.length() < 10 || headline.length() > 200) {
+                    JOptionPane.showMessageDialog(frame, "Headline must be between 10 and 200 characters.", "Validation Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Validate input length (must be between 10–200 characters)
+                if (headline.length() < 10 || headline.length() > 200) {
+                    JOptionPane.showMessageDialog(frame, "Headline must be between 10 and 200 characters!",
+                            "Invalid Input",
+                            JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
 
                 new Thread(() -> {
-                    String result = ApiCaller.checkHeadline(headline);
-                    DatabaseManager.insertResult(headline, result);
+                    try {
+                        String result = ApiCaller.checkHeadline(headline);
+                        DatabaseManager.insertResult(headline, result);
 
-                    SwingUtilities.invokeLater(() -> outputArea.setText(result));
+                        SwingUtilities.invokeLater(() -> outputArea.setText(result));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
+                                null,
+                                "Something went wrong: " + ex.getMessage(),
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE
+                        ));
+                    }
                 }).start();
+
             }
-        });
+        }
+        );
         frame.setVisible(true);
     }
 }
