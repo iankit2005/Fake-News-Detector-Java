@@ -2,11 +2,11 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.*;
+
 public class MainApp {
 
     public static void main(String[] args) {
         DatabaseManager.getConnection();
-
         SwingUtilities.invokeLater(() -> new MainApp().createAndShowGUI());
     }
 
@@ -18,23 +18,33 @@ public class MainApp {
 
         JTextField inputField = new JTextField();
         inputField.setFont(new Font("Arial", Font.PLAIN, 16));
-        frame.add(inputField, BorderLayout.NORTH);
+        inputField.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JButton checkButton = new JButton("Check Headline");
-        frame.add(checkButton, BorderLayout.SOUTH);
-
+        checkButton.setFont(new Font("Arial", Font.PLAIN, 16));
+        checkButton.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+        checkButton.setBackground(new Color(66, 135, 245));
+        checkButton.setForeground(Color.WHITE);
 
         JTextArea outputArea = new JTextArea();
         outputArea.setEditable(false);
         outputArea.setFont(new Font("Arial", Font.PLAIN, 16));
+        outputArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         JScrollPane scrollPane = new JScrollPane(outputArea);
+
+        JPanel inputPanel = new JPanel(new BorderLayout(5, 5));
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
+        inputPanel.add(inputField, BorderLayout.CENTER);
+        inputPanel.add(checkButton, BorderLayout.EAST);
+
+        frame.add(inputPanel, BorderLayout.NORTH);
         frame.add(scrollPane, BorderLayout.CENTER);
 
         checkButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String headline = inputField.getText().trim();
-                // Input validation
+
                 if (headline.isEmpty()) {
                     JOptionPane.showMessageDialog(frame, "Headline cannot be empty.", "Validation Error", JOptionPane.ERROR_MESSAGE);
                     return;
@@ -42,14 +52,6 @@ public class MainApp {
 
                 if (headline.length() < 10 || headline.length() > 200) {
                     JOptionPane.showMessageDialog(frame, "Headline must be between 10 and 200 characters.", "Validation Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                // Validate input length (must be between 10–200 characters)
-                if (headline.length() < 10 || headline.length() > 200) {
-                    JOptionPane.showMessageDialog(frame, "Headline must be between 10 and 200 characters!",
-                            "Invalid Input",
-                            JOptionPane.WARNING_MESSAGE);
                     return;
                 }
 
@@ -69,10 +71,9 @@ public class MainApp {
                         ));
                     }
                 }).start();
-
             }
-        }
-        );
+        });
+
         frame.setVisible(true);
     }
 }
